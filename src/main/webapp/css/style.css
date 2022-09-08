@@ -1,0 +1,11 @@
+td, th {
+    border-bottom: 1px solid #dddddd;
+    text-align: center;
+    padding: 10px;
+}
+tr[date-meal-axcess="true"]{
+    color: red;
+}
+tr[date-meal-axcess="false"]{
+    color: green;
+}
