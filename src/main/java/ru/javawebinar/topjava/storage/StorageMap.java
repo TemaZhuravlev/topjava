@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class StorageMap implements Storage {
+    public static AtomicInteger counter = new AtomicInteger(0);
     private final Map<Integer, Meal> storage = new ConcurrentHashMap<>();
 
     @Override
@@ -27,7 +29,9 @@ public class StorageMap implements Storage {
 
     @Override
     public void save(Meal meal) {
-        storage.put(meal.getId(), meal);
+        Integer count = counter.getAndIncrement();
+        meal.setId(count);
+        storage.put(count, meal);
     }
 
     @Override

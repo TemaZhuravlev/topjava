@@ -16,11 +16,9 @@ public class Meal {
     private int calories;
 
     public Meal() {
-        this.id = MealTestData.counter.getAndIncrement();
     }
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
-        this.id = MealTestData.counter.getAndIncrement();
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;

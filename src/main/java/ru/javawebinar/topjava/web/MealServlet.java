@@ -63,19 +63,20 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        Integer id = Integer.parseInt(request.getParameter("id"));
+        String id = request.getParameter("id");
         Meal meal;
-        if (storageMap.get(id) == null) {
+        boolean isEmptyId = id == null || id.trim().length() == 0;
+        if (isEmptyId) {
             meal = new Meal();
         } else {
-            meal = storageMap.get(id);
+            meal = storageMap.get(Integer.parseInt(id));
         }
         request.getParameter("date-time");
         LocalDateTime ldt = LocalDateTime.parse(request.getParameter("date-time"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         meal.setDateTime(ldt);
         meal.setDescription(request.getParameter("description"));
         meal.setCalories(Integer.parseInt(request.getParameter("calories")));
-        if (storageMap.get(id) == null) {
+        if (isEmptyId) {
             storageMap.save(meal);
         } else {
             storageMap.update(meal);
