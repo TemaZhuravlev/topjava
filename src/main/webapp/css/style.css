@@ -3,9 +3,11 @@ td, th {
     text-align: center;
     padding: 10px;
 }
-tr[date-meal-axcess="true"]{
+
+tr[date-meal-excess="true"] {
     color: red;
 }
-tr[date-meal-axcess="false"]{
+
+tr[date-meal-excess="false"] {
     color: green;
 }

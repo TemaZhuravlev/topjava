@@ -1,10 +1,10 @@
 package ru.javawebinar.topjava.web;
 
-import ru.javawebinar.topjava.MealTestData;
+import org.slf4j.Logger;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
-import ru.javawebinar.topjava.storage.Storage;
-import ru.javawebinar.topjava.storage.StorageMap;
+import ru.javawebinar.topjava.storage.MealStorage;
+import ru.javawebinar.topjava.storage.MemoryMealStorage;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.servlet.ServletConfig;
@@ -14,73 +14,79 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
 import java.util.List;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class MealServlet extends HttpServlet {
-    private Storage storageMap;
+    private MealStorage storage;
+    private static final Logger log = getLogger(MealServlet.class);
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        storageMap = new StorageMap();
-        for (Meal meal : MealTestData.MEALS) {
-            storageMap.save(meal);
-        }
+        storage = new MemoryMealStorage();
+        log.debug("Initialised Storage");
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
-        String id = request.getParameter("id");
         if (action == null) {
-            List<MealTo> mealToList = MealsUtil.filteredByStreams(storageMap.getAll(), MealTestData.MIN_TIME,
-                    MealTestData.MAX_TIME, MealTestData.CALORIES_PER_DAY);
+            List<MealTo> mealToList = MealsUtil.filteredByStreams(storage.getAll(), LocalTime.MIN,
+                    LocalTime.MAX, MemoryMealStorage.CALORIES_PER_DAY);
             request.setAttribute("mealsTo", mealToList);
-            request.getRequestDispatcher("/WEB-INF/jsp/meals.jsp").forward(request, response);
+            request.getRequestDispatcher("meals.jsp").forward(request, response);
+            log.debug("Forward to meals.jsp");
             return;
         }
-        Meal meal;
         switch (action) {
             case "delete":
-                storageMap.delete(Integer.parseInt(id));
+                String id = request.getParameter("id");
+                storage.delete(Integer.parseInt(id));
                 response.sendRedirect("meals");
+                log.debug("Delete meal id=" + id + " and redirect to meals");
                 return;
-            case "add":
-                meal = new Meal();
+            case "create":
+                Meal meal = new Meal();
+                request.setAttribute("meal", meal);
                 break;
             case "edit":
-                meal = storageMap.get(Integer.parseInt(id));
+                id = request.getParameter("id");
+                meal = storage.get(Integer.parseInt(id));
+                request.setAttribute("meal", meal);
                 break;
             default:
-                throw new IllegalArgumentException("Action " + action + "is illegal");
+                response.sendRedirect("meals");
+                log.debug("action=" + action + ", redirect to meals");
+                return;
+
         }
-        request.setAttribute("meal", meal);
-        request.getRequestDispatcher("/WEB-INF/jsp/edit.jsp").forward(request, response);
+        request.setAttribute("action", action);
+        request.getRequestDispatcher("editMeal.jsp").forward(request, response);
+        log.debug("Forward to edit.jsp");
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
+        LocalDateTime ldt = LocalDateTime.parse(request.getParameter("date-time"));
+        String description = request.getParameter("description");
+        int calories = Integer.parseInt(request.getParameter("calories"));
         Meal meal;
-        boolean isEmptyId = id == null || id.trim().length() == 0;
+        boolean isEmptyId = id == null || id.isEmpty();
         if (isEmptyId) {
-            meal = new Meal();
+            meal = new Meal(ldt, description, calories);
+            storage.create(meal);
+            log.debug("Create new meal");
         } else {
-            meal = storageMap.get(Integer.parseInt(id));
-        }
-        request.getParameter("date-time");
-        LocalDateTime ldt = LocalDateTime.parse(request.getParameter("date-time"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        meal.setDateTime(ldt);
-        meal.setDescription(request.getParameter("description"));
-        meal.setCalories(Integer.parseInt(request.getParameter("calories")));
-        if (isEmptyId) {
-            storageMap.save(meal);
-        } else {
-            storageMap.update(meal);
+            meal = new Meal(Integer.parseInt(id), ldt, description, calories);
+            storage.update(meal);
+            log.debug("Update meal");
         }
         response.sendRedirect("meals");
+        log.debug("Redirect to meals");
     }
 }

@@ -21,9 +21,8 @@
     </tr>
     <c:forEach var="mealTo" items="${mealsTo}">
         <jsp:useBean id="mealTo" type="ru.javawebinar.topjava.model.MealTo"/>
-        <tr date-meal-axcess="${mealTo.excess}">
-            <td><%=mealTo.getDate()%> <%=mealTo.getTime()%>
-            </td>
+        <tr date-meal-excess="${mealTo.excess}">
+            <td>${mealTo.getDate()} ${mealTo.getTime()}</td>
             <td>${mealTo.description}</td>
             <td>${mealTo.calories}</td>
             <td><a href="meals?action=delete&id=${mealTo.id}">Удалить</a></td>
