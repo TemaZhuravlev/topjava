@@ -48,7 +48,7 @@ public class MealServlet extends HttpServlet {
                 response.sendRedirect("meals");
                 log.debug("Delete meal id=" + id + " and redirect to meals");
                 return;
-            case "create":
+            case "add":
                 Meal meal = new Meal();
                 request.setAttribute("meal", meal);
                 break;
