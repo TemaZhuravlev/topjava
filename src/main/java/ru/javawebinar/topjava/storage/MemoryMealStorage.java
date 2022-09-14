@@ -15,19 +15,16 @@ public class MemoryMealStorage implements MealStorage {
     private final AtomicInteger counter = new AtomicInteger(0);
     private final Map<Integer, Meal> storage = new ConcurrentHashMap<>();
 
-    public static final int CALORIES_PER_DAY = 2000;
-
-    private final List<Meal> meals = Arrays.asList(
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100),
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
-    );
-
     public MemoryMealStorage() {
+        List<Meal> meals = Arrays.asList(
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100),
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
+        );
         for (Meal meal : meals) {
             create(meal);
         }
@@ -35,19 +32,14 @@ public class MemoryMealStorage implements MealStorage {
 
     @Override
     public Meal update(Meal meal) {
-        if (storage.get(meal.getId()) == null) {
-            throw new IllegalStateException("Meal " + meal.getId() + " not exist");
-        }
-        storage.put(meal.getId(), meal);
-        return storage.get(meal.getId());
+        return storage.replace(meal.getId(), meal);
     }
 
     @Override
     public Meal create(Meal meal) {
         int id = counter.getAndIncrement();
         meal.setId(id);
-        storage.put(id, meal);
-        return storage.get(id);
+        return storage.put(id, meal);
     }
 
     @Override

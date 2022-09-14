@@ -15,13 +15,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
-    private MealStorage storage;
+    public static final int CALORIES_PER_DAY = 2000;
     private static final Logger log = getLogger(MealServlet.class);
+    private MealStorage storage;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -35,7 +37,7 @@ public class MealServlet extends HttpServlet {
         String action = request.getParameter("action");
         if (action == null) {
             List<MealTo> mealToList = MealsUtil.filteredByStreams(storage.getAll(), LocalTime.MIN,
-                    LocalTime.MAX, MemoryMealStorage.CALORIES_PER_DAY);
+                    LocalTime.MAX, CALORIES_PER_DAY);
             request.setAttribute("mealsTo", mealToList);
             request.getRequestDispatcher("meals.jsp").forward(request, response);
             log.debug("Forward to meals.jsp");
@@ -43,27 +45,23 @@ public class MealServlet extends HttpServlet {
         }
         switch (action) {
             case "delete":
-                String id = request.getParameter("id");
-                storage.delete(Integer.parseInt(id));
+                storage.delete(getIdFromRequest(request));
                 response.sendRedirect("meals");
-                log.debug("Delete meal id=" + id + " and redirect to meals");
+                log.debug("Delete meal id={} and redirect to meals", getIdFromRequest(request));
                 return;
             case "add":
-                Meal meal = new Meal();
+                Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), null, 0);
                 request.setAttribute("meal", meal);
                 break;
             case "edit":
-                id = request.getParameter("id");
-                meal = storage.get(Integer.parseInt(id));
+                meal = storage.get(getIdFromRequest(request));
                 request.setAttribute("meal", meal);
                 break;
             default:
                 response.sendRedirect("meals");
-                log.debug("action=" + action + ", redirect to meals");
+                log.debug("action={}, redirect to meals", action);
                 return;
-
         }
-        request.setAttribute("action", action);
         request.getRequestDispatcher("editMeal.jsp").forward(request, response);
         log.debug("Forward to edit.jsp");
     }
@@ -88,5 +86,9 @@ public class MealServlet extends HttpServlet {
         }
         response.sendRedirect("meals");
         log.debug("Redirect to meals");
+    }
+    private int getIdFromRequest (HttpServletRequest request){
+        String id = request.getParameter("id");
+        return Integer.parseInt(id);
     }
 }

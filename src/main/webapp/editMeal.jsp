@@ -1,21 +1,19 @@
-<%@ page import="java.time.LocalDateTime" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="css/style.css">
-    <title>${action == 'edit' ? 'Редактирование еды' : 'Добавление еды'}</title>
+    <title>${param.action == 'edit' ? 'Редактирование еды' : 'Добавление еды'}</title>
 </head>
 <body>
-<h2>${action == 'edit' ? 'Редактирование еды' : 'Добавление еды'}</h2>
+<h2>${param.action == 'edit' ? 'Редактирование еды' : 'Добавление еды'}</h2>
 <form method="post" action="meals">
     <input type="hidden" name="id" value="${meal.id}">
     <dl>
         <dt>Дата и время</dt>
         <dd>
-            <input type="datetime-local" name="date-time"
-                   value="${action == 'edit' ? meal.dateTime : LocalDateTime.now().withSecond(0).withNano(0)}" required>
+            <input type="datetime-local" name="date-time" value="${meal.dateTime}" required>
         </dd>
     </dl>
     <dl>
@@ -34,6 +32,5 @@
     <button type="submit">Сохранить</button>
     <button type="button" onclick="window.history.back()">Отменить</button>
 </form>
-
 </body>
 </html>
