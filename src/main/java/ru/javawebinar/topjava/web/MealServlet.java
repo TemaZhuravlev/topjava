@@ -87,6 +87,7 @@ public class MealServlet extends HttpServlet {
         response.sendRedirect("meals");
         log.debug("Redirect to meals");
     }
+
     private int getIdFromRequest (HttpServletRequest request){
         String id = request.getParameter("id");
         return Integer.parseInt(id);
