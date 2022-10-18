@@ -9,6 +9,8 @@ import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
@@ -21,11 +23,6 @@ public class MealRestController {
     private static final Logger log = LoggerFactory.getLogger(MealRestController.class);
     @Autowired
     private MealService service;
-
-    public List<MealTo> getAll() {
-        log.info("getAll");
-        return MealsUtil.getTos(service.getAll(authUserId()), authUserCaloriesPerDay());
-    }
 
     public Meal get(int id) {
         log.info("get {}", id);
@@ -47,5 +44,17 @@ public class MealRestController {
         log.info("update {} with id={}", meal, id);
         assureIdConsistent(meal, id);
         service.update(meal, authUserId());
+    }
+
+    public List<MealTo> getAll() {
+        log.info("getAll");
+        return MealsUtil.getTos(service.getAll(authUserId()), authUserCaloriesPerDay());
+    }
+
+    public List<MealTo> getBetweenHalfOpen(LocalDate startDate, LocalDate endDate,
+                                           LocalTime startTime, LocalTime endTime) {
+        log.info("getBetweenHalfOpen start {} {} end {} {}", startDate, startTime, endDate, endTime);
+        List<Meal> betweenHalfOpenList = service.getBetweenHalfOpen(startDate, endDate, authUserId());
+        return MealsUtil.getFilteredTos(betweenHalfOpenList, authUserCaloriesPerDay(), startTime, endTime);
     }
 }
