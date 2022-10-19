@@ -17,7 +17,7 @@ public class DateTimeUtil {
         return date != null ? date.atStartOfDay() : LocalDateTime.MIN;
     }
 
-    public static LocalDateTime getThisOrMaxDateTime(LocalDate date) {
+    public static LocalDateTime getNextOrMaxDateTime(LocalDate date) {
         return date != null ? date.plus(1, ChronoUnit.DAYS).atStartOfDay() : LocalDateTime.MAX;
     }
 

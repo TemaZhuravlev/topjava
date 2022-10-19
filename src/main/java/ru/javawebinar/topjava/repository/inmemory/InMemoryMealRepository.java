@@ -46,7 +46,7 @@ public class InMemoryMealRepository implements MealRepository {
                 meal.setUserId(userId);
                 return meal;
             }
-            return oldMeal;
+            return null;
         });
     }
 
