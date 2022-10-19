@@ -9,24 +9,24 @@ import java.time.temporal.ChronoUnit;
 public class DateTimeUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public static boolean isBetweenHalfOpen(LocalTime lt, LocalTime startTime, LocalTime endTime) {
-        return lt.compareTo(startTime) >= 0 && lt.compareTo(endTime) < 0;
+    public static <T extends Comparable<T>> boolean isBetweenHalfOpen(T value, T start, T end) {
+        return value.compareTo(start) >= 0 && value.compareTo(end) < 0;
     }
 
-    public static LocalDateTime getStartMinDateTime(LocalDate startDate) {
-        return startDate != null ? startDate.atStartOfDay() : LocalDateTime.MIN;
+    public static LocalDateTime getThisOrMinDateTime(LocalDate date) {
+        return date != null ? date.atStartOfDay() : LocalDateTime.MIN;
     }
 
-    public static LocalDateTime getEndMaxDateTime(LocalDate endDate) {
-        return endDate != null ? endDate.plus(1, ChronoUnit.DAYS).atStartOfDay() : LocalDateTime.MAX;
+    public static LocalDateTime getThisOrMaxDateTime(LocalDate date) {
+        return date != null ? date.plus(1, ChronoUnit.DAYS).atStartOfDay() : LocalDateTime.MAX;
     }
 
-    public static LocalTime getStartMinTime(LocalTime startTime) {
-        return startTime != null ? startTime : LocalTime.MIN;
+    public static LocalTime getThisOrMinTime(LocalTime time) {
+        return time != null ? time : LocalTime.MIN;
     }
 
-    public static LocalTime getStartMaxTime(LocalTime startTime) {
-        return startTime != null ? startTime : LocalTime.MAX;
+    public static LocalTime getThisOrMaxTime(LocalTime time) {
+        return time != null ? time : LocalTime.MAX;
     }
 
     public static LocalDate parseDate(String str) {

@@ -55,8 +55,10 @@ public class MealRestController {
     public List<MealTo> getBetweenHalfOpen(LocalDate startDate, LocalDate endDate,
                                            LocalTime startTime, LocalTime endTime) {
         log.info("getBetweenHalfOpen start {} {} end {} {}", startDate, startTime, endDate, endTime);
+
         List<Meal> betweenHalfOpenList = service.getBetweenHalfOpen(startDate, endDate, authUserId());
-        return MealsUtil.getFilteredTos(betweenHalfOpenList, authUserCaloriesPerDay(), DateTimeUtil.getStartMinTime(startTime),
-                DateTimeUtil.getStartMaxTime(endTime));
+
+        return MealsUtil.getFilteredTos(betweenHalfOpenList, authUserCaloriesPerDay(), DateTimeUtil.getThisOrMinTime(startTime),
+                DateTimeUtil.getThisOrMaxTime(endTime));
     }
 }

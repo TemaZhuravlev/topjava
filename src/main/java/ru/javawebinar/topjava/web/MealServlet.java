@@ -69,7 +69,7 @@ public class MealServlet extends HttpServlet {
                 LocalDate dateEnd = DateTimeUtil.parseDate(request.getParameter("dateEnd"));
                 LocalTime timeStart = DateTimeUtil.parseTime(request.getParameter("timeStart"));
                 LocalTime timeEnd = DateTimeUtil.parseTime(request.getParameter("timeEnd"));
-
+                log.info("filtered dateStart {} - dateEnd {}, timeStart {} - timeEnd {}", dateStart, dateEnd, timeStart, timeEnd);
                 List<MealTo> betweenHalfOpenList = mealRestController.getBetweenHalfOpen(dateStart, dateEnd, timeStart, timeEnd);
                 request.setAttribute("meals", betweenHalfOpenList);
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
@@ -90,7 +90,6 @@ public class MealServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-        super.destroy();
         appCtx.close();
     }
 }

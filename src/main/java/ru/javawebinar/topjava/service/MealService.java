@@ -7,8 +7,8 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import java.time.LocalDate;
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.DateTimeUtil.getEndMaxDateTime;
-import static ru.javawebinar.topjava.util.DateTimeUtil.getStartMinDateTime;
+import static ru.javawebinar.topjava.util.DateTimeUtil.getThisOrMaxDateTime;
+import static ru.javawebinar.topjava.util.DateTimeUtil.getThisOrMinDateTime;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
@@ -41,6 +41,6 @@ public class MealService {
     }
 
     public List<Meal> getBetweenHalfOpen(LocalDate startDate, LocalDate endDate, int userId) {
-        return repository.getBetweenHalfOpen(getStartMinDateTime(startDate), getEndMaxDateTime(endDate), userId);
+        return repository.getBetweenHalfOpen(getThisOrMinDateTime(startDate), getThisOrMaxDateTime(endDate), userId);
     }
 }
