@@ -5,7 +5,6 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.getEndMaxDateTime;
@@ -37,13 +36,11 @@ public class MealService {
         return checkNotFoundWithId(repository.get(id, userId), id);
     }
 
-    public Collection<Meal> getAll(int userId) {
+    public List<Meal> getAll(int userId) {
         return repository.getAll(userId);
     }
 
     public List<Meal> getBetweenHalfOpen(LocalDate startDate, LocalDate endDate, int userId) {
         return repository.getBetweenHalfOpen(getStartMinDateTime(startDate), getEndMaxDateTime(endDate), userId);
     }
-
-
 }

@@ -8,7 +8,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.time.Month;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +24,9 @@ public class InMemoryMealRepository implements MealRepository {
 
     {
         MealsUtil.meals.forEach(meal -> save(meal, 1));
+        save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 20, 10, 0), "Breakfast", 500), 2);
+        save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 20, 10, 0), "Lunch", 1500), 2);
+        save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 20, 10, 0), "Dinner", 800), 2);
     }
 
     @Override
@@ -36,8 +39,11 @@ public class InMemoryMealRepository implements MealRepository {
             return meal;
         }
         // handle case: update, but not present in storage
-        if (meal.getUserId() == userId) {
-            return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        if (repository.get(meal.getId()).getUserId() == userId) {
+            return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> {
+                meal.setUserId(userId);
+                return meal;
+            });
         }
         return null;
     }
@@ -45,8 +51,9 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public boolean delete(int id, int userId) {
         log.info("delete {} for userId {}", id, userId);
-        if (repository.get(id) != null && repository.get(id).getUserId() != null) {
-            return repository.get(id).getUserId() == userId && repository.remove(id) != null;
+        Meal meal = repository.get(id);
+        if (meal != null) {
+            return meal.getUserId() == userId && repository.remove(id) != null;
         }
         return false;
     }
@@ -54,18 +61,19 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public Meal get(int id, int userId) {
         log.info("get {} for userId {}", id, userId);
-        if (repository.get(id) != null && repository.get(id).getUserId() != null) {
-            return repository.get(id).getUserId() == userId ? repository.get(id) : null;
+        Meal meal = repository.get(id);
+        if (meal != null) {
+            return meal.getUserId() == userId ? meal : null;
         }
         return null;
     }
 
     @Override
-    public Collection<Meal> getAll(int userId) {
+    public List<Meal> getAll(int userId) {
         log.info("getAll");
         return repository.values().stream()
                 .filter(meal -> meal.getUserId() == userId)
-                .sorted(Comparator.comparing(Meal::getDate).reversed())
+                .sorted(Comparator.comparing(Meal::getDate).thenComparing(Meal::getTime).reversed())
                 .collect(Collectors.toList());
     }
 
