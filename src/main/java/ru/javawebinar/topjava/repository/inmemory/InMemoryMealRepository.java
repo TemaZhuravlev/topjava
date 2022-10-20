@@ -10,7 +10,10 @@ import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
@@ -32,7 +35,7 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public Meal save(Meal meal, int userId) {
         log.info("save {} for userId {}", meal, userId);
-        Map<Integer, Meal> meals = repository.computeIfAbsent(userId, map -> new ConcurrentHashMap<>());
+        Map<Integer, Meal> meals = repository.computeIfAbsent(userId, key -> new ConcurrentHashMap<>());
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             meals.put(meal.getId(), meal);
@@ -69,8 +72,7 @@ public class InMemoryMealRepository implements MealRepository {
     private List<Meal> getAllFiltered(int userId, Predicate<Meal> filter) {
         log.info("getAll");
         Map<Integer, Meal> meals = repository.get(userId);
-        Collection<Meal> listMeals = meals != null ? meals.values() : Collections.emptyList();
-        return listMeals.stream()
+        return meals == null ? Collections.emptyList() : meals.values().stream()
                 .filter(filter)
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
