@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Stopwatch;
@@ -41,16 +40,16 @@ public class MealServiceTest {
     public Stopwatch stopwatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            duration.append("\n" + description.getMethodName() + " " + TimeUnit.NANOSECONDS.toMillis(nanos) + " ms");
-            logger.info(description.getMethodName() + " " + TimeUnit.NANOSECONDS.toMillis(nanos));
+            String durationInfo = String.format("\n%-30s %5d ms", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
+            duration.append(durationInfo);
+            logger.info(durationInfo);
         }
     };
 
     @AfterClass
-    public static void printInfo(){
+    public static void printInfo() {
         logger.info(duration.toString());
     }
-
 
     @Autowired
     private MealService service;

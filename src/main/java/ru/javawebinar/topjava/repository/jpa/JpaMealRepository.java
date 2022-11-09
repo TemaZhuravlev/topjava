@@ -27,18 +27,11 @@ public class JpaMealRepository implements MealRepository {
             em.persist(meal);
             return meal;
         } else {
-            return em.createNamedQuery(Meal.UPDATE)
-                    .setParameter("calories", meal.getCalories())
-                    .setParameter("dateTime", meal.getDateTime())
-                    .setParameter("description", meal.getDescription())
-                    .setParameter("id", meal.getId())
-                    .setParameter("userId", userId)
-                    .executeUpdate() != 0 ? meal : null;
-//            Meal tempMeal = get(meal.id(), userId);
-//            if(tempMeal != null){
-//                return em.merge(meal);
-//            }
-//            return null;
+            Meal tempMeal = get(meal.id(), userId);
+            if (tempMeal != null) {
+                return em.merge(meal);
+            }
+            return null;
         }
     }
 
@@ -53,11 +46,13 @@ public class JpaMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        return em.createNamedQuery(Meal.BY_ID, Meal.class)
-                .setParameter("id", id)
-                .setParameter("userId", userId)
-                .getResultList()
-                .stream().findFirst().orElse(null);
+        Meal meal = em.find(Meal.class, id);
+        return meal != null && meal.getUser().getId() == userId ? meal : null;
+//        return em.createNamedQuery(Meal.BY_ID, Meal.class)
+//                .setParameter("id", id)
+//                .setParameter("userId", userId)
+//                .getResultList()
+//                .stream().findFirst().orElse(null);
     }
 
     @Override
