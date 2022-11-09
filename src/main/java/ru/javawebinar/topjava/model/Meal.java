@@ -23,7 +23,6 @@ public class Meal extends AbstractBaseEntity {
 
     public static final String DELETE = "Meal.delete";
     public static final String BY_ID = "Meal.getById";
-    public static final String UPDATE = "Meal.update";
     public static final String GET_ALL = "Meal.getAll";
     public static final String GET_BETWEEN_HALF_OPEN = "Meal.getBetweenHalfOpen";
 

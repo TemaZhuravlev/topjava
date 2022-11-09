@@ -35,6 +35,8 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 public class MealServiceTest {
     private static final Logger logger = LoggerFactory.getLogger("duration");
     private static final StringBuilder duration = new StringBuilder();
+    @Autowired
+    private MealService service;
 
     @Rule
     public Stopwatch stopwatch = new Stopwatch() {
@@ -46,13 +48,11 @@ public class MealServiceTest {
         }
     };
 
+
     @AfterClass
     public static void printInfo() {
         logger.info(duration.toString());
     }
-
-    @Autowired
-    private MealService service;
 
     @Test
     public void delete() {
