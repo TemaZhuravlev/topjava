@@ -35,6 +35,7 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 public class MealServiceTest {
     private static final Logger logger = LoggerFactory.getLogger("duration");
     private static final StringBuilder duration = new StringBuilder();
+
     @Autowired
     private MealService service;
 
@@ -47,7 +48,6 @@ public class MealServiceTest {
             logger.info(durationInfo);
         }
     };
-
 
     @AfterClass
     public static void printInfo() {
