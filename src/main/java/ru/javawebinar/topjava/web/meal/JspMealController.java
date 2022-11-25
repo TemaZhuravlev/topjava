@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.javawebinar.topjava.model.Meal;
 
@@ -20,10 +21,11 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
 @Controller
+@RequestMapping("/meals")
 public class JspMealController extends AbstractMealController {
     private static final Logger log = LoggerFactory.getLogger(JspMealController.class);
 
-    @GetMapping("/meals")
+    @GetMapping
     public String getAll(Model model) {
         log.info("meals");
         model.addAttribute("meals", super.getAll());
@@ -41,21 +43,21 @@ public class JspMealController extends AbstractMealController {
         return "meals";
     }
 
-    @GetMapping("/meals/delete")
+    @GetMapping("/delete")
     public String delete(@RequestParam("id") Integer id) {
         log.info("delete id={}", id);
         super.delete(id);
         return "redirect:/meals";
     }
 
-    @GetMapping("meals/update")
+    @GetMapping("/update")
     public String update(Model model, @RequestParam("id") Integer id) {
         log.info("update id={}", id);
         model.addAttribute("meal", super.get(id));
         return "mealForm";
     }
 
-    @GetMapping("meals/create")
+    @GetMapping("/create")
     public String create(Model model, HttpServletRequest request) {
         Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
         log.info("create");
@@ -63,7 +65,7 @@ public class JspMealController extends AbstractMealController {
         return "mealForm";
     }
 
-    @PostMapping("meals/save")
+    @PostMapping("/save")
     public String save(HttpServletRequest request) {
         Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
