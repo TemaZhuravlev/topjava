@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
+import ru.javawebinar.topjava.util.ValidationUtil;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,7 +47,7 @@ public class JdbcUserRepository implements UserRepository {
     @Transactional
     public User save(User user) {
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
-
+        ValidationUtil.validation(user);
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
             user.setId(newKey.intValue());
@@ -94,7 +95,7 @@ public class JdbcUserRepository implements UserRepository {
 
         @Override
         public List<User> extractData(ResultSet rs) throws SQLException, DataAccessException {
-            User user = null;
+            User user;
             List<Role> roleList;
             Map<Integer, User> mapUser = new HashMap<>();
             Map<Integer, List<Role>> mapRole = new HashMap<>();
