@@ -63,7 +63,7 @@ public class ValidationUtil {
         return rootCause != null ? rootCause : t;
     }
 
-    public static <T> void validation(T object) {
+    public static <T> void validate(T object) {
         Set<ConstraintViolation<T>> violations = validator.validate(object);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);

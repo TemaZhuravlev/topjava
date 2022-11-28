@@ -3,6 +3,7 @@ package ru.javawebinar.topjava;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 
@@ -24,6 +25,10 @@ public class UserTestData {
         return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
     }
 
+    public static User getNew2Roles() {
+        return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Arrays.asList(Role.ADMIN, Role.USER));
+    }
+
     public static User getUpdated() {
         User updated = new User(user);
         updated.setEmail("update@gmail.com");
@@ -32,6 +37,17 @@ public class UserTestData {
         updated.setPassword("newPass");
         updated.setEnabled(false);
         updated.setRoles(Collections.singletonList(Role.ADMIN));
+        return updated;
+    }
+
+    public static User getUpdated2Roles() {
+        User updated = new User(user);
+        updated.setEmail("update@gmail.com");
+        updated.setName("UpdatedName");
+        updated.setCaloriesPerDay(330);
+        updated.setPassword("newPass");
+        updated.setEnabled(false);
+        updated.setRoles(Arrays.asList(Role.ADMIN, Role.USER));
         return updated;
     }
 }

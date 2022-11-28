@@ -1,7 +1,5 @@
 package ru.javawebinar.topjava.web.meal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -23,11 +21,9 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 @Controller
 @RequestMapping("/meals")
 public class JspMealController extends AbstractMealController {
-    private static final Logger log = LoggerFactory.getLogger(JspMealController.class);
 
     @GetMapping
     public String getAll(Model model) {
-        log.info("meals");
         model.addAttribute("meals", super.getAll());
         return "meals";
     }
@@ -38,21 +34,18 @@ public class JspMealController extends AbstractMealController {
         LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
         LocalTime startTime = parseLocalTime(request.getParameter("startTime"));
         LocalTime endTime = parseLocalTime(request.getParameter("endTime"));
-        log.info("getBetween dates({} - {}) time({} - {})", startDate, endDate, startTime, endTime);
         model.addAttribute("meals", super.getBetween(startDate, startTime, endDate, endTime));
         return "meals";
     }
 
     @GetMapping("/delete")
     public String delete(@RequestParam("id") Integer id) {
-        log.info("delete id={}", id);
         super.delete(id);
         return "redirect:/meals";
     }
 
     @GetMapping("/update")
     public String update(Model model, @RequestParam("id") Integer id) {
-        log.info("update id={}", id);
         model.addAttribute("meal", super.get(id));
         return "mealForm";
     }
@@ -60,7 +53,6 @@ public class JspMealController extends AbstractMealController {
     @GetMapping("/create")
     public String create(Model model, HttpServletRequest request) {
         Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
-        log.info("create");
         model.addAttribute("meal", meal);
         return "mealForm";
     }
@@ -72,10 +64,8 @@ public class JspMealController extends AbstractMealController {
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
         if (StringUtils.hasLength(request.getParameter("id"))) {
-            log.info("update {}", meal);
             super.update(meal, Integer.parseInt(request.getParameter("id")));
         } else {
-            log.info("create {}", meal);
             super.create(meal);
         }
         return "redirect:/meals";
