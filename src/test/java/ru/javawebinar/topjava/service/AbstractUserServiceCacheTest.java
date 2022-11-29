@@ -7,7 +7,7 @@ import ru.javawebinar.topjava.repository.JpaUtil;
 public abstract class AbstractUserServiceCacheTest extends AbstractUserServiceTest {
 
     @Autowired
-    protected JpaUtil jpaUtil;
+    private JpaUtil jpaUtil;
 
     @Before
     public void clearCache2anLevelHibernate() {

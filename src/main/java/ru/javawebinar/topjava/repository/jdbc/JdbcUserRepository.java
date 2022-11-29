@@ -97,17 +97,16 @@ public class JdbcUserRepository implements UserRepository {
         public List<User> extractData(ResultSet rs) throws SQLException, DataAccessException {
             Map<Integer, User> mapUser = new LinkedHashMap<>();
             while (rs.next()) {
-                User user;
                 int id = rs.getInt("id");
-                user = mapUser.get(id);
+                User user = mapUser.get(id);
                 if (user == null) {
                     user = ROW_MAPPER.mapRow(rs, rs.getRow());
                     mapUser.put(id, user);
                 }
                 if (rs.getString("role") != null) {
-                    mapUser.get(id).addRole(Role.valueOf(rs.getString("role")));
+                    user.addRole(Role.valueOf(rs.getString("role")));
                 } else {
-                    mapUser.get(id).setRoles(null);
+                    user.setRoles(null);
                 }
             }
             return new ArrayList<>(mapUser.values());
