@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.web.meal;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -88,10 +87,19 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetween() throws Exception {
-        perform(get(REST_URL + "filter" + "?startDateTime=2020-01-30T00:00:00&endDateTime=2020-01-30T23:59:00"))
+        perform(get(REST_URL + "filter" + "?startDate=2020-01-30&startTime=00:00:00&endDate=2020-01-30&endTime=23:00:00"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MEAL_TO_MATCHER.contentJson(getTos(List.of(meal3, meal2, meal1), SecurityUtil.authUserCaloriesPerDay())));
     }
+
+//    @Test
+//    void getBetween() throws Exception {
+//        perform(get(REST_URL + "filter" + "?startDateTime=2020-01-30T00:00:00&endDateTime=2020-01-30T23:59:00"))
+//                .andExpect(status().isOk())
+//                .andDo(print())
+//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+//                .andExpect(MEAL_TO_MATCHER.contentJson(getTos(List.of(meal3, meal2, meal1), SecurityUtil.authUserCaloriesPerDay())));
+//    }
 }
