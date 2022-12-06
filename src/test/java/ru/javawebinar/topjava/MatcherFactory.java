@@ -44,7 +44,12 @@ public class MatcherFactory {
         }
 
         public ResultMatcher contentJson(T expected) {
-            return result -> assertMatch(JsonUtil.readValue(getContent(result), clazz), expected);
+            return new ResultMatcher() {
+                @Override
+                public void match(MvcResult result) throws Exception {
+                    Matcher.this.assertMatch(JsonUtil.readValue(getContent(result), clazz), expected);
+                }
+            };
         }
 
         @SafeVarargs
