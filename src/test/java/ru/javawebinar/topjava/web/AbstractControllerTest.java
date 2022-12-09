@@ -42,8 +42,7 @@ public abstract class AbstractControllerTest {
     @Autowired
     private Environment env;
 
-    public boolean isJpaBased() {
-//        return Arrays.stream(env.getActiveProfiles()).noneMatch(Profiles.JDBC::equals);
+    protected boolean isDataJpaBased() {
         return env.acceptsProfiles(org.springframework.core.env.Profiles.of(Profiles.DATAJPA));
     }
 

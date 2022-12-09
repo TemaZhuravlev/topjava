@@ -53,7 +53,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getWithMeals() throws Exception {
-        Assumptions.assumeTrue(isJpaBased(), "Validation not supported (DataJPA only)");
+        Assumptions.assumeTrue(isDataJpaBased(), "Not supported (DataJPA only)");
         ResultActions action = perform(MockMvcRequestBuilders.get(REST_URL + "/with-meals"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
