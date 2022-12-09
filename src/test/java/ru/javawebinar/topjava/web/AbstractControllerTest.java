@@ -1,7 +1,8 @@
 package ru.javawebinar.topjava.web;
 
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -37,6 +38,14 @@ public abstract class AbstractControllerTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
+
+    @Autowired
+    private Environment env;
+
+    public boolean isJpaBased() {
+//        return Arrays.stream(env.getActiveProfiles()).noneMatch(Profiles.JDBC::equals);
+        return env.acceptsProfiles(org.springframework.core.env.Profiles.of(Profiles.DATAJPA));
+    }
 
     @PostConstruct
     private void postConstruct() {

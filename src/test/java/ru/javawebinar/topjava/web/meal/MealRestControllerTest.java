@@ -13,8 +13,6 @@ import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -22,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.util.MealsUtil.createTo;
 import static ru.javawebinar.topjava.util.MealsUtil.getTos;
 
 public class MealRestControllerTest extends AbstractControllerTest {
@@ -29,7 +28,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = MealRestController.REST_URL + '/';
 
     @Autowired
-    protected MealService service;
+    private MealService service;
 
     @Test
     void getAll() throws Exception {
@@ -87,19 +86,26 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetween() throws Exception {
-        perform(get(REST_URL + "filter" + "?startDate=2020-01-30&startTime=00:00:00&endDate=2020-01-30&endTime=23:00:00"))
+        perform(get(REST_URL + "filter")
+                .param("startDate", "2020-01-30")
+                .param("startTime", "11:00:00")
+                .param("endDate", "2020-01-31")
+                .param("endTime", "20:00:00"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEAL_TO_MATCHER.contentJson(getTos(List.of(meal3, meal2, meal1), SecurityUtil.authUserCaloriesPerDay())));
+                .andExpect(MEAL_TO_MATCHER.contentJson(createTo(meal6, true), createTo(meal2, false)
+                ));
     }
 
-//    @Test
-//    void getBetween() throws Exception {
-//        perform(get(REST_URL + "filter" + "?startDateTime=2020-01-30T00:00:00&endDateTime=2020-01-30T23:59:00"))
-//                .andExpect(status().isOk())
-//                .andDo(print())
-//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//                .andExpect(MEAL_TO_MATCHER.contentJson(getTos(List.of(meal3, meal2, meal1), SecurityUtil.authUserCaloriesPerDay())));
-//    }
+    @Test
+    void getBetweenWithNullDates() throws Exception {
+        perform(get(REST_URL + "filter")
+                .param("startDate", "")
+                .param("endTime", ""))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(getTos(meals, SecurityUtil.authUserCaloriesPerDay())));
+    }
 }

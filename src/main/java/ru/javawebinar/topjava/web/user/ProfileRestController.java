@@ -35,7 +35,7 @@ public class ProfileRestController extends AbstractUserController {
     }
 
     @GetMapping("/with-meals")
-    public User getWithMealsLocation() {
+    public User getWithMeals() {
         return super.getWithMeals(authUserId());
     }
 }
